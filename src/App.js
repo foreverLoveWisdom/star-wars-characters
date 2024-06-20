@@ -1,23 +1,49 @@
-import logo from './logo.svg';
-import './App.css';
+import axios from "axios";
+import { useEffect, useState } from "react";
+import "./App.css";
+import CharacterList from "./components/CharacterList";
+import Pagination from "./components/Pagination";
 
 function App() {
+  const [data, setData] = useState(null);
+  const [currentPage, setCurrentPage] = useState(1);
+
+  useEffect(() => {
+    const fetchCharacters = async () => {
+      try {
+        const response = await axios.get(
+          `https://swapi.dev/api/people/?page=${currentPage}`
+        );
+        setData(response.data);
+      } catch (err) {
+        console.error("App Error: ", err, "\n\n\n");
+      }
+    };
+
+    fetchCharacters();
+  }, [currentPage]);
+
+  const handlePageChange = (pageNumber) => {
+    setCurrentPage(pageNumber);
+  };
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div className="main">
+      {data ? (
+        <>
+          <CharacterList characters={data.results} />
+          <Pagination
+            currentPage={currentPage}
+            nextPage={data.next ? parseInt(data.next.split("=")[1]) : null}
+            prevPage={
+              data.previous ? parseInt(data.previous.split("=")[1]) : null
+            }
+            onPageChange={handlePageChange}
+          />
+        </>
+      ) : (
+        <div>Loading...</div>
+      )}
     </div>
   );
 }
