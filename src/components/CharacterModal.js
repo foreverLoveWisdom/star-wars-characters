@@ -1,13 +1,16 @@
 import { useState, useEffect } from "react";
 
+const TOTAL_CHARACTERS = 83;
+
 const CharacterModal = ({ character, onClose }) => {
   const [randomImage, setRandomImage] = useState("");
 
+  const fetchRandomImage = () => {
+    const randomNum = Math.floor(Math.random() * TOTAL_CHARACTERS) + 1;
+    return `https://starwars-visualguide.com/assets/img/characters/${randomNum}.jpg`;
+  };
+
   useEffect(() => {
-    const fetchRandomImage = () => {
-      const randomNum = Math.floor(Math.random() * 83) + 1;
-      return `https://starwars-visualguide.com/assets/img/characters/${randomNum}.jpg`;
-    };
     setRandomImage(fetchRandomImage());
   }, [character]);
 
